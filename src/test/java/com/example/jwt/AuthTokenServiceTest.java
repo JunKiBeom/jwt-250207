@@ -4,8 +4,6 @@ import com.example.jwt.domain.member.member.entity.Member;
 import com.example.jwt.domain.member.member.service.AuthTokenService;
 import com.example.jwt.domain.member.member.service.MemberService;
 import com.example.jwt.standard.util.Ut;
-import io.jsonwebtoken.Jwt;
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,13 +48,7 @@ public class AuthTokenServiceTest {
         assertThat(jwtStr).isNotBlank();
         // 단순히 null이 아닌지만 확인, 검증이 아님
 
-        Jwt<?, ?> parsedJwt = Jwts
-                .parser()
-                .verifyWith(secretKey)
-                .build()
-                .parse(jwtStr);
-
-        Map<String, Object> parsedPayload = (Map<String, Object>) parsedJwt.getPayload();
+        Map<String, Object> parsedPayload = Ut.Jwt.getPayload(secretKey, jwtStr);
 
         assertThat(parsedPayload).containsAllEntriesOf(originPayload);
     }
