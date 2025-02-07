@@ -29,6 +29,9 @@ public class AuthTokenServiceTest {
     @Autowired
     private MemberService memberService;
 
+    // 토큰 시크릿 키 -> 도장 찍는 룰
+    SecretKey secretKey = Keys.hmacShaKeyFor("abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890".getBytes());
+
     @Test
     @DisplayName("AuthTokenService 생성")
     void init() {
@@ -41,16 +44,13 @@ public class AuthTokenServiceTest {
         // 토큰 만료기간 : 1년
         int expireSeconds = 60 * 60 * 24 * 365;
 
-        // 토큰 시크릿 키 -> 도장 찍는 룰
-        SecretKey secretKey = Keys.hmacShaKeyFor("abcdefghijklmnopqrstuvwxyz1234567890abcdefghijklmnopqrstuvwxyz1234567890".getBytes());
-
         Map<String, Object> originPayload = Map.of("name", "john", "age", 23);
 
         String jwtStr = Ut.Jwt.createToken(secretKey, expireSeconds, Map.of("name", "john", "age", 23));
         assertThat(jwtStr).isNotBlank();
         // 단순히 null이 아닌지만 확인, 검증이 아님
 
-        Jwt<?,?> parsedJwt = Jwts
+        Jwt<?, ?> parsedJwt = Jwts
                 .parser()
                 .verifyWith(secretKey)
                 .build()
@@ -72,5 +72,15 @@ public class AuthTokenServiceTest {
         assertThat(accessToken).isNotBlank();
 
         System.out.println("accessToken = " + accessToken);
+    }
+
+    @Test
+    @DisplayName("jwt valid check")
+    void checkValid() {
+
+        Member member = memberService.findByUsername("user1").get();
+        String accessToken = authTokenService.genAccessToken(member);
+        boolean isValid = Ut.Jwt.isValidToken(secretKey, accessToken);
+        assertThat(isValid).isTrue();
     }
 }
