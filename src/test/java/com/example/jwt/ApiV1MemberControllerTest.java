@@ -1,4 +1,4 @@
-package com.example.jwt.securityExam;
+package com.example.jwt;
 
 import com.example.jwt.domain.member.member.controller.ApiV1MemberController;
 import com.example.jwt.domain.member.member.entity.Member;

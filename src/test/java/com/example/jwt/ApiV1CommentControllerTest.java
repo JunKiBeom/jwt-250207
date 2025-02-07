@@ -1,4 +1,4 @@
-package com.example.jwt.securityExam;
+package com.example.jwt;
 
 import com.example.jwt.domain.post.comment.controller.ApiV1CommentController;
 import com.example.jwt.domain.post.comment.entity.Comment;
